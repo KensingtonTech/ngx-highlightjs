@@ -3,7 +3,7 @@ import { Component, DebugElement, Input, OnInit } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import * as hljs from 'highlight.js';
-import { Highlight } from './highlight';
+import { HighlightDirective } from './highlight.directive';
 import { HighlightLoader } from './highlight.loader';
 
 @Component({
@@ -24,14 +24,14 @@ const highlightLoaderStub = {
 describe('Highlight Directive', () => {
   let component: TestHighlightComponent;
   let directiveElement: DebugElement;
-  let directiveInstance: Highlight;
+  let directiveInstance: HighlightDirective;
   let fixture: ComponentFixture<TestHighlightComponent>;
   let loader: HighlightLoader;
   const testCode = 'console.log(&quot;test&quot;)';
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [Highlight, TestHighlightComponent],
+      declarations: [HighlightDirective, TestHighlightComponent],
       providers: [{ provide: HighlightLoader, useValue: highlightLoaderStub }]
     }).compileComponents();
     loader = TestBed.get(HighlightLoader);
@@ -40,8 +40,8 @@ describe('Highlight Directive', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TestHighlightComponent);
     component = fixture.componentInstance;
-    directiveElement = fixture.debugElement.query(By.directive(Highlight));
-    directiveInstance = directiveElement.injector.get(Highlight);
+    directiveElement = fixture.debugElement.query(By.directive(HighlightDirective));
+    directiveInstance = directiveElement.injector.get(HighlightDirective);
     fixture.detectChanges();
   });
 

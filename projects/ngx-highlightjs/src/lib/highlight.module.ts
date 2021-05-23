@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
-import { Highlight } from './highlight';
+import { HighlightDirective } from './highlight.directive';
 
 @NgModule({
-  declarations: [Highlight],
-  exports: [Highlight]
+  declarations: [HighlightDirective],
+  exports: [HighlightDirective]
 })
-export class HighlightModule {
-}
+export class HighlightModule {}

@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { animationFrameScheduler } from 'rxjs';
-import { HighlightJS } from './highlight.service';
+import { HighlightService } from './highlight.service';
 import { HIGHLIGHT_OPTIONS, HighlightOptions, HighlightResult } from './highlight.model';
 
 @Directive({
@@ -21,13 +21,13 @@ import { HIGHLIGHT_OPTIONS, HighlightOptions, HighlightResult } from './highligh
   },
   selector: '[highlight]'
 })
-export class Highlight implements OnChanges {
+export class HighlightDirective implements OnChanges {
 
   // Highlighted Code
   private readonly _nativeElement: HTMLElement;
 
   // Temp observer to observe when line numbers has been added to code element
-  private _lineNumbersObs: any;
+  private _lineNumbersObserver: any;
 
   // Highlight code input
   @Input('highlight') code!: string;
@@ -42,13 +42,16 @@ export class Highlight implements OnChanges {
   // Stream that emits when code string is highlighted
   @Output() highlighted = new EventEmitter<HighlightResult>();
 
-  constructor(el: ElementRef,
-              private _hljs: HighlightJS,
-              private _sanitizer: DomSanitizer,
-              @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
-    this._nativeElement = el.nativeElement;
-  }
+  constructor(
+    el: ElementRef,
+    private _highlightService: HighlightService,
+    private _sanitizer: DomSanitizer,
+    @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
+      this._nativeElement = el.nativeElement;
+    }
 
+
+  
   ngOnChanges(changes: SimpleChanges) {
     if (
       this.code &&
@@ -60,6 +63,8 @@ export class Highlight implements OnChanges {
     }
   }
 
+
+
   /**
    * Highlighting with language detection and fix markup.
    * @param code Accepts a string with the code to highlight
@@ -69,7 +74,7 @@ export class Highlight implements OnChanges {
   highlightElement(code: string, languages: string[]): void {
     // Set code text before highlighting
     this.setTextContent(code);
-    this._hljs.highlightAuto(code, languages).subscribe((res: any) => {
+    this._highlightService.highlightAuto(code, languages).subscribe((res: any) => {
       // Set highlighted code
       this.setInnerHTML(res.value);
       // Check if user want to show line numbers
@@ -81,36 +86,44 @@ export class Highlight implements OnChanges {
     });
   }
 
+
+
   private addLineNumbers() {
     // Clean up line numbers observer
     this.destroyLineNumbersObserver();
     animationFrameScheduler.schedule(() => {
       // Add line numbers
-      this._hljs.lineNumbersBlock(this._nativeElement).subscribe();
+      this._highlightService.lineNumbersBlock(this._nativeElement).subscribe();
       // If lines count is 1, the line numbers library will not add numbers
       // Observe changes to add 'hljs-line-numbers' class only when line numbers is added to the code element
-      this._lineNumbersObs = new MutationObserver(() => {
+      this._lineNumbersObserver = new MutationObserver(() => {
         if (this._nativeElement.firstElementChild && this._nativeElement.firstElementChild.tagName.toUpperCase() === 'TABLE') {
           this._nativeElement.classList.add('hljs-line-numbers');
         }
         this.destroyLineNumbersObserver();
       });
-      this._lineNumbersObs.observe(this._nativeElement, { childList: true });
+      this._lineNumbersObserver.observe(this._nativeElement, { childList: true });
     });
   }
 
+
+
   private destroyLineNumbersObserver() {
-    if (this._lineNumbersObs) {
-      this._lineNumbersObs.disconnect();
-      this._lineNumbersObs = null;
+    if (this._lineNumbersObserver) {
+      this._lineNumbersObserver.disconnect();
+      this._lineNumbersObserver = null;
     }
   }
+
+
 
   private setTextContent(content: string) {
     animationFrameScheduler.schedule(() =>
       this._nativeElement.textContent = content
     );
   }
+
+
 
   private setInnerHTML(content: string) {
     animationFrameScheduler.schedule(() =>

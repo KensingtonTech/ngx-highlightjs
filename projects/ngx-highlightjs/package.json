@@ -25,13 +25,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "highlight.js": "*",
-    "highlightjs-line-numbers.js": "*",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
     "@angular/common": ">=8.0.0",
     "@angular/core": ">=8.0.0",
-    "rxjs": ">=6.0.0"
+    "rxjs": ">=6.0.0",
+    "highlight.js": "^11.0.0-beta1",
+    "highlightjs-line-numbers.js": "*"
   }
 }

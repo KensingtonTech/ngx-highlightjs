@@ -1,33 +1,37 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { HighlightConfig, HighlightResult, HighlightLibrary, HighlightOptions, HIGHLIGHT_OPTIONS } from './highlight.model';
+import { HighlightConfig, HighlightResult, HighlightOptions, HIGHLIGHT_OPTIONS } from './highlight.model';
 import { HighlightLoader } from './highlight.loader';
+import { HLJSApi } from 'highlight.js';
 
 @Injectable({
   providedIn: 'root'
 })
-export class HighlightJS {
+export class HighlightService {
 
-  private _hljs: HighlightLibrary | null = null;
+  private _hljs: HLJSApi | null = null;
 
   // A reference for hljs library
-  get hljs(): HighlightLibrary | null {
+  get hljs(): HLJSApi | null {
     return this._hljs;
   }
 
-  constructor(private _loader: HighlightLoader, @Optional() @Inject(HIGHLIGHT_OPTIONS) options: HighlightOptions) {
-    // Load highlight.js library on init
-    _loader.ready.pipe().subscribe((hljs: HighlightLibrary) => {
-      this._hljs = hljs;
-      if (options && options.config) {
-        // Set global config if present
-        hljs.configure(options.config);
-        if (hljs.listLanguages().length < 1) {
-          console.error('[HighlightJS]: No languages were registered!');
+  constructor(
+    private _loader: HighlightLoader,
+    @Optional() @Inject(HIGHLIGHT_OPTIONS) options: HighlightOptions) {
+      // Load highlight.js library on init
+      console.log('HighlightService: constructor(): options:', options);
+      _loader.ready.pipe().subscribe((hljs: HLJSApi) => {
+        this._hljs = hljs;
+        if (options && options.config) {
+          // Set global config if present
+          hljs.configure(options.config);
+          if (hljs.listLanguages().length < 1) {
+            console.error('[HighlightJS]: No languages were registered!');
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -41,7 +45,7 @@ export class HighlightJS {
    */
   highlight(name: string, value: string, ignore_illegals: boolean, continuation?: any): Observable<HighlightResult> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.highlight(name, value, ignore_illegals, continuation))
+      map((hljs: HLJSApi) => hljs.highlight(name, value, ignore_illegals, continuation))
     );
   }
 
@@ -53,21 +57,10 @@ export class HighlightJS {
    */
   highlightAuto(value: string, languageSubset: string[]): Observable<HighlightResult> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.highlightAuto(value, languageSubset))
+      map((hljs: HLJSApi) => hljs.highlightAuto(value, languageSubset))
     );
   }
 
-  /**
-   * Post-processing of the highlighted markup.
-   * Currently consists of replacing indentation TAB characters and using <br> tags instead of new-line characters.
-   * Options are set globally with configure.
-   * @param value Accepts a string with the highlighted markup
-   */
-  fixMarkup(value: string): Observable<string> {
-    return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.fixMarkup(value))
-    );
-  }
 
   /**
    * Applies highlighting to a DOM node containing code.
@@ -75,9 +68,9 @@ export class HighlightJS {
    * See the class reference for all available language names and aliases.
    * @param block The element to apply highlight on.
    */
-  highlightBlock(block: HTMLElement): Observable<void> {
+   highlightElement(block: HTMLElement): Observable<void> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.highlightBlock(block))
+      map((hljs: HLJSApi) => hljs.highlightElement(block))
     );
   }
 
@@ -87,7 +80,7 @@ export class HighlightJS {
    */
   configure(config: HighlightConfig): Observable<void> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.configure(config))
+      map((hljs: HLJSApi) => hljs.configure(config))
     );
   }
 
@@ -96,7 +89,7 @@ export class HighlightJS {
    */
   initHighlighting(): Observable<void> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.initHighlighting())
+      map((hljs: HLJSApi) => hljs.initHighlighting())
     );
   }
 
@@ -106,9 +99,9 @@ export class HighlightJS {
    * @param language A function that returns an object which represents the language definition.
    * The function is passed the hljs object to be able to use common regular expressions defined within it.
    */
-  registerLanguage(name: string, language: () => any): Observable<HighlightLibrary> {
+  registerLanguage(name: string, language: () => any): Observable<HLJSApi> {
     return this._loader.ready.pipe(
-      tap((hljs: HighlightLibrary) => hljs.registerLanguage(name, language))
+      tap((hljs: HLJSApi) => hljs.registerLanguage(name, language))
     );
   }
 
@@ -117,7 +110,7 @@ export class HighlightJS {
    */
   listLanguages(): Observable<string[]> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.listLanguages())
+      map((hljs: HLJSApi) => hljs.listLanguages())
     );
   }
 
@@ -128,7 +121,7 @@ export class HighlightJS {
    */
   getLanguage(name: string): Observable<any> {
     return this._loader.ready.pipe(
-      map((hljs: HighlightLibrary) => hljs.getLanguage(name))
+      map((hljs: HLJSApi) => hljs.getLanguage(name))
     );
   }
 
@@ -138,8 +131,8 @@ export class HighlightJS {
    */
   lineNumbersBlock(el: HTMLElement): Observable<any> {
     return this._loader.ready.pipe(
-      filter((hljs: HighlightLibrary) => !!hljs.lineNumbersBlock),
-      tap((hljs: HighlightLibrary) => hljs.lineNumbersBlock(el))
+      filter((hljs: HLJSApi) => !!(hljs as any).lineNumbersBlock),
+      tap((hljs: HLJSApi) => (hljs as any).lineNumbersBlock(el))
     );
   }
 }
