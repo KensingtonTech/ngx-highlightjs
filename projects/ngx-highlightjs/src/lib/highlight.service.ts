@@ -21,8 +21,8 @@ export class HighlightService {
     private _loader: HighlightLoader,
     @Optional() @Inject(HIGHLIGHT_OPTIONS) options: HighlightOptions) {
       // Load highlight.js library on init
-      console.log('HighlightService: constructor(): options:', options);
       _loader.ready.pipe().subscribe((hljs: HLJSApi) => {
+        console.log('HighlightService: constructor(): options:', options);
         this._hljs = hljs;
         if (options && options.config) {
           // Set global config if present

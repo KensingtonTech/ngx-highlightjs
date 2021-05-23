@@ -17,7 +17,8 @@ export class HighlightLoader {
   constructor(
     @Inject(DOCUMENT) doc: any,
     @Inject(PLATFORM_ID) platformId: object,
-    @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
+    // @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
+    @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
       console.log('HighlightLoader: constructor(): _options:', this._options);
       // Check if hljs is already available
       if (isPlatformBrowser(platformId) && doc.defaultView.hljs) {
@@ -27,7 +28,7 @@ export class HighlightLoader {
       else {
         // Load hljs library
         this._loadLibrary().pipe(
-          switchMap((hljs: HLJSApi) => {
+          switchMap((hljs: HLJSApi ) => {
             hljs.addPlugin(mergeHTMLPlugin);
             if (this._options && this._options.lineNumbersLoader) {
               console.log('HighlightLoader: constructor(): got to 1');
