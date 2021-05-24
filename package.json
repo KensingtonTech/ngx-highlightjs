@@ -1,18 +1,15 @@
 {
-  "name": "ngx-highlightjs",
+  "name": "@kensingtontech/ngx-highlightjs",
   "version": "0.0.0",
   "description": "Instant code highlighting, auto-detect language.",
-  "homepage": "http://github.com/murhafsousli/ngx-highlightjs",
+  "homepage": "https://github.com/KensingtonTech/ngx-highlightjs",
   "author": {
-    "name": "Murhaf Sousli",
-    "url": "http://github.com/murhafsousli"
+    "name": "Tim Underhay",
+    "url": "http://github.com/KensingtonTech"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/murhafsousli/ngx-highlightjs.git"
-  },
-  "bugs": {
-    "url": "http://github.com/murhafsousli/ngx-highlightjs/issues"
+    "url": "https://github.com/KensingtonTech/ngx-highlightjs.git"
   },
   "keywords": [
     "angular",
@@ -26,7 +23,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve ngx-highlightjs-demo",
-    "build-demo": "ng build ngx-highlightjs-demo --prod",
     "build-lib": "ng build ngx-highlightjs --prod",
     "test-lib": "ng test ngx-highlightjs",
     "test-lib-headless": "ng test ngx-highlightjs --watch=false --no-progress --browsers=ChromeHeadless",
@@ -42,10 +38,8 @@
     "@angular/core": "~11.0.2",
     "@angular/platform-browser": "~11.0.2",
     "@angular/platform-browser-dynamic": "~11.0.2",
-    "ngx-scrollbar": "^7.4.1",
-    "normalize.css": "^8.0.1",
     "rxjs": "~6.5.4",
-    "tslib": "^2.0.0",
+    "tslib": "^2.2.0",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

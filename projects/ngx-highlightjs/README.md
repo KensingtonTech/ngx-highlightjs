@@ -1,23 +1,17 @@
-<p align="center">
-  <img height="200px" width="200px" style="text-align: center" src="https://cdn.rawgit.com/MurhafSousli/ngx-highlightjs/b8b00ec3/src/assets/logo.svg">
-  <h1 align="center">Angular Highlight.js</h1>
-</p>
+# Angular Highlight.js
 
-[![Demo](https://img.shields.io/badge/demo-online-ed1c46.svg)](https://ngx-highlight.netlify.com/)
-[![Stackblitz](https://img.shields.io/badge/stackblitz-online-orange.svg)](https://stackblitz.com/edit/ngx-highlightjs)
-[![npm](https://img.shields.io/npm/v/ngx-highlightjs.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/ngx-highlightjs)
-[![tests](https://github.com/MurhafSousli/ngx-highlightjs/workflows/tests/badge.svg)](https://github.com/MurhafSousli/ngx-highlightjs/actions?query=workflow%3Atests)
-[![Downloads](https://img.shields.io/npm/dt/ngx-highlightjs.svg?maxAge=2592000?style=plastic)](https://www.npmjs.com/package/ngx-highlightjs)
-[![Monthly Downloads](https://img.shields.io/npm/dm/ngx-highlightjs.svg)](https://www.npmjs.com/package/ngx-highlightjs)
-[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/ngx-highlightjs.svg)](https://bundlephobia.com/result?p=ngx-highlightjs)
-[![License](https://img.shields.io/npm/l/express.svg?maxAge=2592000)](/LICENSE)
+Instant code highlighting, auto-detect language.
 
-Instant code highlighting, auto-detect language, super easy to use
+## Differences from the original
+- Uses highlight.js@^11.0.0-beta1.
+- Suppors ESM module imports.
+- Renamed some files for more intuitive usage.
+- Removed HighlightLibrary interface in favour of highlight.js' own Typescript definition
+- All other changes associated with Highlight.js 11.
 ___
 
 ## Table of Contents
 
-- [Live Demo](https://ngx-highlight.netlify.com/) | [Stackblitz](https://stackblitz.com/edit/ngx-highlightjs)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Development](#development)
@@ -32,7 +26,7 @@ ___
 Install with **NPM**
 
 ```bash
-npm i ngx-highlightjs
+npm i @kensingtontech/ngx-highlightjs
 ```
 
 <a name="usage"/>
@@ -40,6 +34,8 @@ npm i ngx-highlightjs
 ## Usage
 
 ### Import `HighlightModule` in your app
+
+*Top Tip:*: Do this in app.module, not in a lazy-loaded module
 
 ```typescript
 import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
@@ -242,28 +238,19 @@ $ ng build ngx-highlightjs
 
 ## Issues
 
-If you identify any errors in the library, or have an idea for an improvement, please open an [issue](https://github.com/MurhafSousli/ngx-highlightjs/issues).
+Sorry, I'm not actively supporting this module.  It's for my own use and am sharing it with those who might find it useful.
 
 <a name="author"/>
 
-## Author
+# Author
+
+ **Tim Underhay**
+
+- [github/murhafsousli](https://github.com/KensingtonTech)
+
+## Original Author
 
  **Murhaf Sousli**
 
 - [github/murhafsousli](https://github.com/MurhafSousli)
 - [twitter/murhafsousli](https://twitter.com/MurhafSousli)
-
-<a name="more-plugins"/>
-
-## More plugins
-
-- [ngx-scrollbar](https://github.com/MurhafSousli/ngx-ngx-scrollbar)
-- [ngx-sharebuttons](https://github.com/MurhafSousli/ngx-sharebuttons)
-- [ngx-gallery](https://github.com/MurhafSousli/ngx-gallery)
-- [ngx-progressbar](https://github.com/MurhafSousli/ngx-progressbar)
-- [ngx-scrollbar](https://github.com/MurhafSousli/ngx-scrollbar)
-- [ngx-bar-rating](https://github.com/MurhafSousli/ngx-bar-rating)
-- [ngx-disqus](https://github.com/MurhafSousli/ngx-disqus)
-- [ngx-wordpress](https://github.com/MurhafSousli/ngx-wordpress)
-- [ngx-highlightjs](https://github.com/MurhafSousli/ngx-highlightjs)
-- [ngx-teximate](https://github.com/MurhafSousli/ngx-teximate)

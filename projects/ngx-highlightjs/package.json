@@ -1,18 +1,15 @@
 {
-  "name": "ngx-highlightjs",
-  "version": "4.1.3",
-  "description": "Instant code highlighting, auto-detect language, super easy to use.",
-  "homepage": "http://github.com/murhafsousli/ngx-highlightjs",
+  "name": "@kensingtontech/ngx-highlightjs",
+  "version": "11.0.0-beta1",
+  "description": "Instant code highlighting, auto-detect language",
+  "homepage": "https://github.com/KensingtonTech/ngx-highlightjs",
   "author": {
-    "name": "Murhaf Sousli",
-    "url": "http://github.com/murhafsousli"
+    "name": "Tim Underhay",
+    "url": "http://github.com/KensingtonTech"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/murhafsousli/ngx-highlightjs.git"
-  },
-  "bugs": {
-    "url": "http://github.com/murhafsousli/ngx-highlightjs/issues"
+    "url": "https://github.com/KensingtonTech/ngx-highlightjs.git"
   },
   "keywords": [
     "angular",

@@ -1,9 +1,10 @@
 import { Injectable, Inject, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
-import { HighlightConfig, HighlightResult, HighlightOptions, HIGHLIGHT_OPTIONS } from './highlight.model';
+import { NgxHighlightConfig, HighlightResult, NgxHighlightOptions, HIGHLIGHT_OPTIONS } from './highlight.model';
 import { HighlightLoader } from './highlight.loader';
 import { HLJSApi } from 'highlight.js';
+import { CompiledMode, Mode, Language, HighlightOptions } from 'highlight.js';
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +20,9 @@ export class HighlightService {
 
   constructor(
     private _loader: HighlightLoader,
-    @Optional() @Inject(HIGHLIGHT_OPTIONS) options: HighlightOptions) {
+    @Optional() @Inject(HIGHLIGHT_OPTIONS) options: NgxHighlightOptions) {
       // Load highlight.js library on init
       _loader.ready.pipe().subscribe((hljs: HLJSApi) => {
-        console.log('HighlightService: constructor(): options:', options);
         this._hljs = hljs;
         if (options && options.config) {
           // Set global config if present
@@ -43,9 +43,15 @@ export class HighlightService {
    * @param continuation An optional mode stack representing unfinished parsing.
    * When present, the function will restart parsing from this state instead of initializing a new one
    */
-  highlight(name: string, value: string, ignore_illegals: boolean, continuation?: any): Observable<HighlightResult> {
+  /*highlight(name: string, value: string, ignore_illegals: boolean, continuation?: any): Observable<HighlightResult> {
     return this._loader.ready.pipe(
       map((hljs: HLJSApi) => hljs.highlight(name, value, ignore_illegals, continuation))
+    );
+  }*/
+
+  highlight(codeOrLanguageName: string, optionsOrCode: string | HighlightOptions, ignoreIllegals?: boolean, continuation?: Mode): Observable<HighlightResult> {
+    return this._loader.ready.pipe(
+      map((hljs: HLJSApi) => hljs.highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals, continuation))
     );
   }
 
@@ -78,7 +84,7 @@ export class HighlightService {
    * Configures global options:
    * @param config HighlightJs configuration argument
    */
-  configure(config: HighlightConfig): Observable<void> {
+  configure(config: NgxHighlightConfig): Observable<void> {
     return this._loader.ready.pipe(
       map((hljs: HLJSApi) => hljs.configure(config))
     );

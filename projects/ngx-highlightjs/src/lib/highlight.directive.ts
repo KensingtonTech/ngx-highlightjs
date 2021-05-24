@@ -13,7 +13,7 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { animationFrameScheduler } from 'rxjs';
 import { HighlightService } from './highlight.service';
-import { HIGHLIGHT_OPTIONS, HighlightOptions, HighlightResult } from './highlight.model';
+import { HIGHLIGHT_OPTIONS, NgxHighlightOptions, HighlightResult } from './highlight.model';
 
 @Directive({
   host: {
@@ -46,7 +46,7 @@ export class HighlightDirective implements OnChanges {
     el: ElementRef,
     private _highlightService: HighlightService,
     private _sanitizer: DomSanitizer,
-    @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: HighlightOptions) {
+    @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: NgxHighlightOptions) {
       this._nativeElement = el.nativeElement;
     }
 
