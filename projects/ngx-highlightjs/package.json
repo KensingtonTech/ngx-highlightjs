@@ -1,6 +1,6 @@
 {
   "name": "@kensingtontech/ngx-highlightjs",
-  "version": "11.0.0-beta1",
+  "version": "11.0.0-beta1.0",
   "description": "Instant code highlighting, auto-detect language",
   "homepage": "https://github.com/KensingtonTech/ngx-highlightjs",
   "author": {
