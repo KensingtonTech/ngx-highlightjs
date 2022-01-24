@@ -40,18 +40,10 @@ export class HighlightService {
    * @param value A string with the code to highlight.
    * @param ignore_illegals When present and evaluates to a true value, forces highlighting to finish
    * even in case of detecting illegal syntax for the language instead of throwing an exception.
-   * @param continuation An optional mode stack representing unfinished parsing.
-   * When present, the function will restart parsing from this state instead of initializing a new one
    */
-  /*highlight(name: string, value: string, ignore_illegals: boolean, continuation?: any): Observable<HighlightResult> {
+  highlight(codeOrLanguageName: string, optionsOrCode: string | HighlightOptions, ignoreIllegals?: boolean): Observable<HighlightResult> {
     return this._loader.ready.pipe(
-      map((hljs: HLJSApi) => hljs.highlight(name, value, ignore_illegals, continuation))
-    );
-  }*/
-
-  highlight(codeOrLanguageName: string, optionsOrCode: string | HighlightOptions, ignoreIllegals?: boolean, continuation?: Mode): Observable<HighlightResult> {
-    return this._loader.ready.pipe(
-      map((hljs: HLJSApi) => hljs.highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals, continuation))
+      map((hljs: HLJSApi) => hljs.highlight(codeOrLanguageName, optionsOrCode, ignoreIllegals))
     );
   }
 

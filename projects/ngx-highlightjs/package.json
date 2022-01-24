@@ -1,6 +1,6 @@
 {
   "name": "@kensingtontech/ngx-highlightjs",
-  "version": "11.0.0-beta1.0",
+  "version": "11.4.0",
   "description": "Instant code highlighting, auto-detect language",
   "homepage": "https://github.com/KensingtonTech/ngx-highlightjs",
   "author": {
@@ -25,10 +25,10 @@
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
-    "@angular/common": ">=8.0.0",
-    "@angular/core": ">=8.0.0",
+    "@angular/common": ">=13.0.0",
+    "@angular/core": ">=13.0.0",
     "rxjs": ">=6.0.0",
-    "highlight.js": "^11.0.0-beta1",
-    "highlightjs-line-numbers.js": "*"
+    "highlight.js": "~11.4.0",
+    "highlightjs-line-numbers.js": "^2.8.0"
   }
 }

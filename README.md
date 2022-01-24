@@ -1,131 +1,257 @@
-import { Injectable, Inject, PLATFORM_ID, Optional } from '@angular/core';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject, Observable, from, EMPTY, zip, throwError } from 'rxjs';
-import { catchError, tap, map, switchMap, filter, take } from 'rxjs/operators';
-import { HIGHLIGHT_OPTIONS, NgxHighlightOptions } from './highlight.model';
-import { mergeHTMLPlugin } from './htmlPlugin';
-import { HLJSApi } from 'highlight.js';
+# Angular Highlight.js
 
+Instant code highlighting, auto-detect language.
 
-// @dynamic
-@Injectable({
-  providedIn: 'root'
+## Differences from the original
+- Uses highlight.js@11.4.0.
+- Built with and requires Angular@^13.0.0.
+- Supports ESM module imports.
+- Renamed some files for more intuitive usage.
+- Removed HighlightLibrary interface in favour of highlight.js' own Typescript definition
+- All other changes associated with Highlight.js 11.
+___
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Issues](#issues)
+- [Author](#author)
+- [More plugins](#more-plugins)
+
+<a name="installation"/>
+
+## Installation
+
+Install with **NPM**
+
+```bash
+npm i @kensingtontech/ngx-highlightjs
+```
+
+<a name="usage"/>
+
+## Usage
+
+### Import `HighlightModule` in your app
+
+*Top Tip:*: Do this in app.module, not in a lazy-loaded module
+
+```typescript
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+
+@NgModule({
+  imports: [
+    HighlightModule
+  ],
+  providers: [
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        fullLibraryLoader: () => import('highlight.js'),
+      }
+    }
+  ],
 })
+export class AppModule { }
+```
 
-export class HighlightLoader {
-  
-  constructor(
-    @Inject(DOCUMENT) doc: any,
-    @Inject(PLATFORM_ID) platformId: object,
-    @Optional() @Inject(HIGHLIGHT_OPTIONS) private _options: NgxHighlightOptions) {
-      // Check if hljs is already available
-      if (isPlatformBrowser(platformId) && doc.defaultView.hljs) {
-        this._ready.next(doc.defaultView.hljs);
-      }
-      else {
-        // Load hljs library
-        this._loadLibrary().pipe(
-          switchMap((hljs: HLJSApi ) => {
-            hljs.addPlugin(mergeHTMLPlugin);
-            if (this._options && this._options.lineNumbersLoader) {
-              // Make hljs available on window object (required for the line numbers library)
-              doc.defaultView.hljs = hljs;
-              // Load line numbers library
-              return this.loadLineNumbers().pipe(tap(() => this._ready.next(hljs)));
-            }
-            else {
-              this._ready.next(hljs);
-              return EMPTY;
-            }
-          }),
-          catchError((e: any) => {
-            console.error('[HLJS] ', e);
-            return EMPTY;
-          })
-        ).subscribe();
+ > Note: This will add highlight.js library including all languages to your bundle.
+
+To avoid import everything from highlight.js library, you should import each language you want to highlight manually.
+
+### Import only the core library and the needed highlighting languages
+
+```typescript
+import { HighlightModule, HIGHLIGHT_OPTIONS } from 'ngx-highlightjs';
+ 
+@NgModule({
+  imports: [
+    HighlightModule
+  ],
+  providers: [
+    {
+      provide: HIGHLIGHT_OPTIONS,
+      useValue: {
+        coreLibraryLoader: () => import('highlight.js/lib/core'),
+        lineNumbersLoader: () => import('highlightjs-line-numbers.js'), // Optional, only if you want the line numbers
+        languages: {
+          typescript: () => import('highlight.js/lib/languages/typescript'),
+          css: () => import('highlight.js/lib/languages/css'),
+          xml: () => import('highlight.js/lib/languages/xml')
+        }
       }
     }
+  ],
+})
+export class AppModule { }
+```
+
+### HighlightOptions API
+
+| Name              | Description                                                                                                             |
+|-------------------|-------------------------------------------------------------------------------------------------------------------------|
+| fullLibraryLoader | A function that returns a promise that loads `highlight.js` full script                                                 |
+| coreLibraryLoader | A function that returns a promise that loads `highlight.js` core script                                                 |
+| lineNumbersLoader | A function that returns a promise that loads `line-numbers` script which adds line numbers to the highlight code        |
+| languages         | The set of languages to register.                                                                                       |
+| config            | Set highlight.js config, see [configure-options](http://highlightjs.readthedocs.io/en/latest/api.html#configure-option) |
 
 
+ > **NOTE:** Since the update of highlight.js@v10.x.x, should use `coreLibraryLoader: () => import('highlight.js/lib/core')` instead of `coreLibraryLoader: () => import('highlight.js/lib/highlight')`
 
-  // Stream that emits when hljs library is loaded and ready to use
-  private readonly _ready = new BehaviorSubject<HLJSApi | null>(null);
-  readonly ready: Observable<HLJSApi> = this._ready.asObservable().pipe(
-    filter((hljs: HLJSApi | null) => !!hljs),
-    map((hljs: HLJSApi | null) => hljs as HLJSApi),
-    take(1)
-  );
-  
+### Import highlighting theme
 
-  /**
-   * Lazy-Load highlight.js library
-   */
-  private _loadLibrary(): Observable<any> {
-    if (this._options) {
-      if (this._options.fullLibraryLoader && this._options.coreLibraryLoader) {
-        return throwError('The full library and the core library were imported, only one of them should be imported!');
-      }
-      if (this._options.fullLibraryLoader && this._options.languages) {
-        return throwError('The highlighting languages were imported they are not needed!');
-      }
-      if (this._options.coreLibraryLoader && !this._options.languages) {
-        return throwError('The highlighting languages were not imported!');
-      }
-      if (!this._options.coreLibraryLoader && this._options.languages) {
-        return throwError('The core library was not imported!');
-      }
-      if (this._options.fullLibraryLoader) {
-        return this.loadFullLibrary();
-      }
-      if (this._options.coreLibraryLoader && this._options.languages && Object.keys(this._options.languages).length) {
-        return this.loadCoreLibrary().pipe(switchMap((hljs: HLJSApi) => this._loadLanguages(hljs)));
+Import highlight.js theme from the node_modules directory in `angular.json`
+
+```
+"styles": [
+  "styles.css",
+  "../node_modules/highlight.js/styles/github.css",
+]
+```
+
+Or import it in `src/style.scss`
+
+```css
+@import '~highlight.js/styles/github.css';
+```
+
+_[List of all available themes from highlight.js](https://github.com/isagalaev/highlight.js/tree/master/src/styles)_
+
+### Use highlight directive
+
+The following line will highlight the given code and append it to the host element
+
+```html
+<pre><code [highlight]="code"></code></pre>
+```
+
+[Demo stackblitz](https://stackblitz.com/edit/ngx-highlightjs)
+
+## Options
+
+| Name              | Type            | Description                                                                                                |
+|-------------------|-----------------|------------------------------------------------------------------------------------------------------------|
+| **[highlight]**   | string          | Accept code string to highlight, default `null`                                                            |
+| **[languages]**   | string[]        | An array of language names and aliases restricting auto detection to only these languages, default: `null` |
+| **[lineNumbers]** | boolean         | A flag that indicates adding line numbers to highlighted code element                                      |
+| **(highlighted)** | HighlightResult | Stream that emits the result object when element is highlighted                                            |
+
+
+### NOTE
+
+In Angular 10, when building your project, you might get a warning `WARNING in ... CommonJS or AMD dependencies can cause optimization bailouts.`
+
+To avoid this warning, add the following in your `angular.json`
+```json
+{
+  "projects": {
+    "project-name": {
+      "architect": {
+        "build": {
+          "options": {
+            "allowedCommonJsDependencies": [
+              "highlight.js"
+            ]
+          }
+        }
       }
     }
-    return throwError('Highlight.js library was not imported!');
-  }
-
-  /**
-   * Lazy-load highlight.js languages
-   */
-  private _loadLanguages(hljs: HLJSApi): Observable<any> {
-    const languages = Object.entries(this._options.languages!).map(([langName, langLoader]) =>
-      importModule(langLoader()).pipe(
-        tap((langFunc: any) => hljs.registerLanguage(langName, langFunc))
-      )
-    );
-    return zip(...languages).pipe(map(() => hljs));
-  }
-
-
-  /**
-   * Import highlight.js core library
-   */
-  private loadCoreLibrary(): Observable<HLJSApi> {
-    return importModule(this._options.coreLibraryLoader!());
-  }
-
-  /**
-   * Import highlight.js library with all languages
-   */
-  private loadFullLibrary(): Observable<HLJSApi> {
-    return importModule(this._options.fullLibraryLoader!());
-  }
-
-
-  /**
-   * Import line numbers library
-   */
-  private loadLineNumbers(): Observable<any> {
-    return importModule(this._options.lineNumbersLoader!());
   }
 }
+```
+Read more about [CommonJS dependencies configuration](https://angular.io/guide/build#configuring-commonjs-dependencies)
 
-/**
- * Map loader response to module object
- */
-const importModule = (moduleLoader: Promise<any>): Observable<any> => {
-  return from(moduleLoader).pipe(
-    filter((module: any) => !!module && !!module.default),
-    map((module: any) => module.default)
-  );
-};
+## Plus package
+
+In version >= 4, a new sub-package were added with the following features:
+
+- Highlight gists using gists API
+- Highlight code directly from URL
+
+### Usage
+
+```typescript
+import { HighlightPlusModule } from 'ngx-highlightjs/plus';
+ 
+@NgModule({
+  imports: [
+    HighlightPlusModule
+  ]
+})
+export class AppModule {
+}
+```
+
+### Highlight a gist file
+
+1. Use `[gist]` directive with the gist id to get the response through the output `(gistLoaded)`.
+2. Once `(gistLoaded)` emits, you will get access to the gist response.
+3. Use `gistContent` pipe to extract the file content from gist response using gist file name.
+
+**Example:**
+
+```html
+<pre [gist]="gistId" (gistLoaded)="gist = $event">
+  <code [highlight]="gist | gistContent: 'main.js'"></code>
+</pre>
+```
+
+### Highlight all gist files
+
+To loop over `gist?.files`, use `keyvalue` pipe to pass file name into `gistContent` pipe.
+
+**Example:**
+
+```html
+<ng-container [gist]="gistId" (gistLoaded)="gist = $event">
+  <pre *ngFor="let file of gist?.files | keyvalue">
+    <code [highlight]="gist | gistContent: file.key"></code>
+  </pre>
+</ng-container>
+```
+
+### Highlight code from URL directly
+
+Use the pipe `codeFromUrl` with the `async` pipe together to get the code text from a raw URL.
+
+**Example:**
+
+```html
+<pre>
+  <code [highlight]="codeUrl | codeFromUrl | async"></code>
+</pre>
+``` 
+
+<a name="development"/>
+
+## Development
+
+This project uses Angular CLI to build the package.
+
+```bash
+$ ng build ngx-highlightjs
+```
+
+<a name="issues"/>
+
+## Issues
+
+Sorry, I'm not actively supporting this module.  It's for my own use and am sharing it with those who might find it useful.
+
+<a name="author"/>
+
+# Author
+
+ **Tim Underhay**
+
+- [github/murhafsousli](https://github.com/KensingtonTech)
+
+## Original Author
+
+ **Murhaf Sousli**
+
+- [github/murhafsousli](https://github.com/MurhafSousli)
+- [twitter/murhafsousli](https://twitter.com/MurhafSousli)
